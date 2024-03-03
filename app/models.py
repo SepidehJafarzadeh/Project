@@ -10,6 +10,9 @@ class Feature(models.Model):
     color = models.CharField(max_length=50, default=False)
     material = models.CharField(max_length=50, default=False)
 
+    def __str__(self):
+        return self.name
+
 
 class ProductFeature(models.Model):
     feature = models.ManyToManyField(Feature)
@@ -22,6 +25,9 @@ class Image(models.Model):
 
 class User(AbstractUser):
     email = models.EmailField(unique=False)
+
+    def __str__(self):
+        return self.email
 
 
 class Product(models.Model):
@@ -42,6 +48,9 @@ class Comment(models.Model):
     text = models.TextField(max_length=200)
     date = models.DateTimeField(default=timezone.now)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.product
     
 class Category(models.Model):
     parent = models.ForeignKey('self', default=None, null=True, blank=True, on_delete=models.CASCADE, related_name='children')
