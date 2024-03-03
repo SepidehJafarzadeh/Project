@@ -1,0 +1,60 @@
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+
+# Create your models here.
+class Feature(models.Model):
+    name = models.CharField(max_length=100)
+    size = models.IntegerField(default=False)
+    weight = models.IntegerField(default=False)
+    color = models.CharField(max_length=50, default=False)
+    material = models.CharField(max_length=50, default=False)
+
+
+class ProductFeature(models.Model):
+    feature = models.ManyToManyField(Feature)
+    value = models.IntegerField()
+
+
+class Image(models.Model):
+    image = models.ImageField(default=False, upload_to='images/')
+
+
+class User(AbstractUser):
+    email = models.EmailField(unique=False)
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(default=False)
+    description = models.TextField(max_length=200)
+    price = models.IntegerField()
+    feature = models.ManyToManyField(ProductFeature)
+    category= models.ForeignKey("category", related_name="Product", on_delete=models.CASCADE, blank=True, null=True)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.name
+    
+class Comment(models.Model):
+    writer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    text = models.TextField(max_length=200)
+    date = models.DateTimeField(default=timezone.now)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    
+class Category(models.Model):
+    parent = models.ForeignKey('self', default=None, null=True, blank=True, on_delete=models.CASCADE, related_name='children')
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(default=False)
+    status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+    
+
+
+
+
+
+
